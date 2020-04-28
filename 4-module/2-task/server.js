@@ -19,6 +19,7 @@ server.on('request', (req, res) => {
       if (pathname.includes('/') || pathname.includes('..')) {
         res.statusCode = 400;
         res.end('Nested paths are not allowed');
+        return;
       }
 
       /**
@@ -65,10 +66,17 @@ function postFile(pathname, filepath, req, res) {
     if (err.code === 'LIMIT_EXCEEDED') {
       res.statusCode = 413;
       res.end('File is to big');
-      fs.unlink(filepath, (err) => {
-        if (err) throw err;
-      });
+      fs.unlink(filepath, (err) => {});
+      return;
     }
+
+    /**
+     * Unknown server error.
+     * Response with the "500" status code.
+     * */
+    res.statusCode = 500;
+    res.end('Server error');
+    fs.unlink(filepath, (err) => {});
   });
 
   /**
@@ -84,6 +92,14 @@ function postFile(pathname, filepath, req, res) {
       res.end('File already exist');
       return;
     }
+
+    /**
+     * Unknown server error.
+     * Response with the "500" status code.
+     * */
+    res.statusCode = 500;
+    res.end('Server error');
+    fs.unlink(filepath, (err) => {});
   });
 
   /**
@@ -104,11 +120,10 @@ function postFile(pathname, filepath, req, res) {
    * destroy all resources associated with the stream.
    * */
   res.on('close', () => {
-    if (!res.writableEnded) {
-      fs.unlink(filepath, (err) => {
-        if (err) throw err;
-      });
+    if (res.writableEnded) {
+      return;
     }
+    fs.unlink(filepath, (err) => {});
     file.destroy();
   });
 }
