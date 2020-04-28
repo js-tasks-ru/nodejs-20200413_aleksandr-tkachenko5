@@ -21,7 +21,11 @@ server.on('request', (req, res) => {
         res.end('Nested paths are not allowed');
         return;
       }
-
+      if (req.headers['content-length'] <= 0) {
+        res.statusCode = 409;
+        res.end();
+        return;
+      }
       /**
        * Create a file on the disk.
        * @param {pathname}
