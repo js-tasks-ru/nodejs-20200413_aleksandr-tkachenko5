@@ -88,7 +88,7 @@ function postFile(pathname, filepath, req, res) {
    * */
   file.on('error', (err) => {
     /**
-     * If the file is exist,
+     * If the file exists,
      * response with the ""409 status code.
      * */
     if (err.code === 'EEXIST') {
