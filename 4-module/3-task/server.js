@@ -34,7 +34,7 @@ function deleteFile(pathname, filepath, req, res) {
 
   /**
    * If the file does not exists,
-   * response with the ""409 status code.
+   * response with the "404" status code.
    * */
   if(!fs.existsSync(filepath)) {
     res.statusCode = 404;
