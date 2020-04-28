@@ -38,11 +38,13 @@ server.on('request', (req, res) => {
 });
 
 function postFile(pathname, filepath, req, res) {
+
   /**
    * Create a limited stream class.
    * That will thron an error if the limit is exceeded.
    * */
   const limitedStream = new LimitSizeStream({limit: 1000000}); // 1mb
+
   /**
    * Create a writable stream with the "wx" flag.
    * 'wx': Like 'w' but fails if the path exists.
