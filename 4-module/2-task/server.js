@@ -43,16 +43,16 @@ server.on('request', (req, res) => {
 });
 
 function postFile(pathname, filepath, req, res) {
-  /**
-   * HACK (Travis CI failed tests)
-   * If the file does not exists,
-   * response with the ""409 status code.
-   * */
-  if(fs.existsSync(filepath)) {
-    res.statusCode = 409;
-    res.end('The file does not exists');
-    return;
-  }
+  // /**
+  //  * HACK (Travis CI failed tests)
+  //  * If the file does not exists,
+  //  * response with the ""409 status code.
+  //  * */
+  // if(fs.existsSync(filepath)) {
+  //   res.statusCode = 409;
+  //   res.end('The file does not exists');
+  //   return;
+  // }
 
   /**
    * Create a limited stream class.
