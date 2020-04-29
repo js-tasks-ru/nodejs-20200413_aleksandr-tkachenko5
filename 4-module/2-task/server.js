@@ -135,10 +135,14 @@ function postFile(pathname, filepath, req, res) {
    * destroy all resources associated with the stream.
    * */
   res.on('close', () => {
-    if (res.writableEnded) {
+    /**
+     * DEPRECATED
+     * should be used if (res.writableEnded)
+     * */
+    if (res.finished) {
       return;
     }
-    // fs.unlink(filepath, (err) => {});
+    fs.unlink(filepath, (err) => {});
     file.destroy();
   });
 }
