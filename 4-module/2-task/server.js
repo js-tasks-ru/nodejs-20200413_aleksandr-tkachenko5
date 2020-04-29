@@ -43,8 +43,6 @@ server.on('request', (req, res) => {
 });
 
 function postFile(pathname, filepath, req, res) {
-
-
   // /**
   //  *
   //  * HACK (Travis CI failed tests)
@@ -70,7 +68,7 @@ function postFile(pathname, filepath, req, res) {
    * */
   const file = fs.createWriteStream(filepath, {flags: 'wx'});
   req.pipe(limitedStream)
-    .pipe(file);
+      .pipe(file);
 
   /**
    * Error tracking of the limited stream.
