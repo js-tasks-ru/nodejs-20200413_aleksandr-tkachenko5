@@ -138,7 +138,7 @@ function postFile(pathname, filepath, req, res) {
     if (res.writableEnded) {
       return;
     }
-    fs.unlink(filepath, (err) => {});
+    // fs.unlink(filepath, (err) => {});
     file.destroy();
   });
 }
