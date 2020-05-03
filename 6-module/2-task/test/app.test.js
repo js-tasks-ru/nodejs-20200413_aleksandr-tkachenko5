@@ -77,7 +77,7 @@ describe('6-module-2-task', () => {
 
         expect(
             categories[0].subcategories[0].id,
-            'идентификатор подкатегории содержит тоже значение, что и в базе'
+            '3в базе'
         ).to.equal(category.subcategories[0].id);
       });
     });
