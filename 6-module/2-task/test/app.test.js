@@ -106,7 +106,6 @@ describe('6-module-2-task', () => {
           const response = await client.get('http://localhost:3000/api/products', {
             params: {subcategory: (new ObjectId()).toString()},
           });
-
           expect(
               response.data,
               'ответ сервера содержит массив .products'
