@@ -22,7 +22,6 @@ module.exports.categoryList = async function categoryList(ctx, next) {
     temp.subcategories = tempSubcategoriesArray;
     tempArray.push(temp);
   }
-
   ctx.body = {categories: tempArray};
   return next();
 };
