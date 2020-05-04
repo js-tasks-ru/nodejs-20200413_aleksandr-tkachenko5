@@ -77,7 +77,7 @@ describe('6-module-2-task', () => {
 
         expect(
             categories[0].subcategories[0].id,
-            '3в базе'
+            'идентификатор подкатегории содержит тоже значение, что и в базе'
         ).to.equal(category.subcategories[0].id);
       });
     });
@@ -106,6 +106,7 @@ describe('6-module-2-task', () => {
           const response = await client.get('http://localhost:3000/api/products', {
             params: {subcategory: (new ObjectId()).toString()},
           });
+
           expect(
               response.data,
               'ответ сервера содержит массив .products'
