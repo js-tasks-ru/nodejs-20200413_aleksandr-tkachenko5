@@ -32,6 +32,20 @@ const productSchema = new mongoose.Schema({
 
 });
 
+/**
+ * Schema configuration:
+ *  Indexes:
+ *    title,
+ *    description,
+ *  Indexes weights:
+ *    title: 10,
+ *    description: 5,
+ *  Indexes name:
+ *    TextSearchIndex
+ *  Default language:
+ *    russian
+ *
+ * */
 productSchema.index(
     {
       title: 'text',
