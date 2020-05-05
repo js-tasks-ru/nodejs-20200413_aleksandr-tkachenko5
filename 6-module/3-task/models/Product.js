@@ -32,4 +32,32 @@ const productSchema = new mongoose.Schema({
 
 });
 
+/**
+ * Schema configuration:
+ *  Indexes:
+ *    title,
+ *    description,
+ *  Indexes weights:
+ *    title: 10,
+ *    description: 5,
+ *  Indexes name:
+ *    TextSearchIndex
+ *  Default language:
+ *    russian
+ *
+ * */
+productSchema.index(
+    {
+      title: 'text',
+      description: 'text',
+    },
+    {
+      name: 'TextSearchIndex',
+      default_language: 'russian',
+      weights: {
+        title: 10,
+        description: 5,
+      },
+    });
+
 module.exports = connection.model('Product', productSchema);
