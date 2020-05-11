@@ -20,6 +20,7 @@ const transportEngine = process.env.NODE_ENV === 'test'
     },
   });
 
+
 const transport = nodemailer.createTransport(transportEngine);
 
 transport.use('compile', htmlToText());
@@ -44,6 +45,7 @@ module.exports = async function sendMail(options) {
       path.join(__dirname, '../templates', options.template) + '.pug',
       options.locals || {},
   );
+
 
   const message = {
     html: juice(html),

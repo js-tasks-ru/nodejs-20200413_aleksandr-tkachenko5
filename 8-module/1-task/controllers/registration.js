@@ -21,7 +21,6 @@ module.exports.register = async (ctx, next) => {
    * If such user exist, return the error.
    * */
   const isExistingUser = await User.findOne({email: userData.email});
-  console.log(isExistingUser);
   if (isExistingUser) {
     ctx.status = 400;
     ctx.body = {errors: {email: 'Такой email уже существует'}};
@@ -35,6 +34,19 @@ module.exports.register = async (ctx, next) => {
   const user = new User(userData);
   await user.setPassword(userData.password);
   await user.save();
+
+  const opts = {
+    template: 'confirmation',
+    locals: {token: token},
+    to: userData.email,
+    subject: 'Verify your email, please',
+  };
+
+  if (await sendMail(opts)) {
+    ctx.status = 200;
+    ctx.body = {status: 'ok'};
+    return;
+  }
 };
 
 module.exports.confirm = async (ctx, next) => {
