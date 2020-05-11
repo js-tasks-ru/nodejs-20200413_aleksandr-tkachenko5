@@ -29,9 +29,33 @@ app.use(async (ctx, next) => {
   }
 });
 
+/**
+ *  Executes with the user object.
+ *  Return session token that will be created in the proccess of the function execution.
+ * */
 app.use((ctx, next) => {
   ctx.login = async function(user) {
+    /**
+     * Creating of the new session token.
+     * */
     const token = uuid();
+
+    /**
+     * Creating of the new session.
+     * @param: token
+     * @param: Date object
+     * @param: user._id
+     * */
+    const session = new Session({
+      token,
+      lastVisit: new Date(),
+      user: user._id,
+    });
+
+    /**
+     * Save the session.
+     * */
+    await session.save();
 
     return token;
   };
@@ -41,19 +65,53 @@ app.use((ctx, next) => {
 
 const router = new Router({prefix: '/api'});
 
+/**
+ * Check for the session token.
+ * */
 router.use(async (ctx, next) => {
+  /**
+   * Check for the "Authorization" header.
+   * If the header does not exist, call the next middleware.
+   * */
   const header = ctx.request.get('Authorization');
   if (!header) return next();
 
+  /**
+   * Split the token from the "Authorization" header.
+   * If the token does not exist, call the next middleware.
+   * */
+  const bearerToken = header.split(' ')[1];
+  if (!bearerToken) {
+    return next();
+  }
+
+  /**
+   * Searching the session related to the user token.
+   * If the session does not exist, return the "401" error.
+   * */
+  const session = await Session.findOne({token: bearerToken}).populate('user');
+  if (!session) {
+    ctx.status = 401;
+    ctx.body = {error: 'Неверный аутентификационный токен'};
+    return;
+  }
+
+  /**
+   * If the session is exist, update the last visit of the user,
+   * and save the user object to the "ctx.user" property.
+   * */
+  session.lastVisit = new Date();
+  await session.save();
+  ctx.user = session.user;
+
   return next();
 });
-
 router.post('/login', login);
 
 router.get('/oauth/:provider', oauth);
 router.post('/oauth_callback', handleMongooseValidationError, oauthCallback);
 
-router.get('/me', me);
+router.get('/me', mustBeAuthenticated, me);
 
 app.use(router.routes());
 
@@ -63,7 +121,7 @@ const fs = require('fs');
 const index = fs.readFileSync(path.join(__dirname, 'public/index.html'));
 app.use(async (ctx) => {
   if (ctx.url.startsWith('/api') || ctx.method !== 'GET') return;
-  
+
   ctx.set('content-type', 'text/html');
   ctx.body = index;
 });
