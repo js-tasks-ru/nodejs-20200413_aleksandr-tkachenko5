@@ -29,9 +29,33 @@ app.use(async (ctx, next) => {
   }
 });
 
+/**
+ *  Executes with the user object.
+ *  Return session token that will be created in the proccess of the function execution.
+ * */
 app.use((ctx, next) => {
   ctx.login = async function(user) {
+    /**
+     * Creating of the new session token.
+     * */
     const token = uuid();
+
+    /**
+     * Creating of the new session.
+     * @param: token
+     * @param: Date object
+     * @param: user._id
+     * */
+    const session = new Session({
+      token,
+      lastVisit: new Date(),
+      user: user._id,
+    });
+
+    /**
+     * Save the session.
+     * */
+    await session.save();
 
     return token;
   };
@@ -47,7 +71,6 @@ router.use(async (ctx, next) => {
 
   return next();
 });
-
 router.post('/login', login);
 
 router.get('/oauth/:provider', oauth);
@@ -63,7 +86,7 @@ const fs = require('fs');
 const index = fs.readFileSync(path.join(__dirname, 'public/index.html'));
 app.use(async (ctx) => {
   if (ctx.url.startsWith('/api') || ctx.method !== 'GET') return;
-  
+
   ctx.set('content-type', 'text/html');
   ctx.body = index;
 });

@@ -68,4 +68,37 @@ userSchema.methods.checkPassword = async function(password) {
   return hash === this.passwordHash;
 };
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * userSchema statics.
+ * More about methods and statics:
+ * https://monsterlessons.com/project/lessons/statics-i-methods-v-mongoose
+ *
+ * Looking for the user in the database by the provided login and password
+ * */
+userSchema.statics.login = async function(email, password) {
+  const user = await this.findOne({email}).select('+password +salt');
+
+  /**
+   * If there is no such user, return the error message
+   * */
+  if (!user) {
+    return 'No such user';
+  }
+
+  /**
+   * Check the provided password for correctness.
+   * If the password is wrong, return the error message.
+   * */
+  const isPasswordCorrect = await user.checkPassword(password);
+  if (!isPasswordCorrect) {
+    return 'Incorrect password';
+  }
+
+  /**
+   * Return the user object
+   * */
+  return user;
+};
+
 module.exports = connection.model('User', userSchema);
