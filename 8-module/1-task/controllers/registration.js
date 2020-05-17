@@ -50,4 +50,35 @@ module.exports.register = async (ctx, next) => {
 };
 
 module.exports.confirm = async (ctx, next) => {
+  /**
+   * Get the verification token from the request
+   * */
+  const {verificationToken} = ctx.request.body;
+
+  /**
+   * Find the user by the verification token
+   * */
+  const user = await User.findOne({verificationToken});
+
+  /**
+   * If the user was not found, return the error
+   * */
+  if (!user) {
+    ctx.status = 400;
+    ctx.body = {error: 'Ссылка подтверждения недействительна или устарела'};
+    return;
+  }
+
+  /**
+   * Remove verification token and update the user
+   * */
+  user.verificationToken = undefined;
+  user.markModified('verificationToken');
+  await user.save();
+
+  /**
+   * Authenticate the user
+   * */
+  const token = await ctx.login(user);
+  ctx.body = {token};
 };
