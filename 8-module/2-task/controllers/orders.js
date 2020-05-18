@@ -47,4 +47,15 @@ module.exports.checkout = async function checkout(ctx, next) {
 };
 
 module.exports.getOrdersList = async function ordersList(ctx, next) {
+  /**
+   * Get the user id
+   * */
+  const user = ctx.user._id;
+
+  /**
+   * Get the orders list related to the user
+   * */
+  const orders = await Order.find({user});
+
+  ctx.body = {orders};
 };
